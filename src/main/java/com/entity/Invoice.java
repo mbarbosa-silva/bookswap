@@ -52,5 +52,61 @@ public class Invoice {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn
 	private User seller;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Double getTotalToBePaid() {
+		return totalToBePaid;
+	}
+
+	public void setTotalToBePaid(Double totalToBePaid) {
+		this.totalToBePaid = totalToBePaid;
+	}
+
+	public Timestamp getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Timestamp createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public Timestamp getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public void setModifiedDate(Timestamp modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
+
+	public Ad getAd() {
+		return ad;
+	}
+
+	public void setAd(Ad ad) {
+		this.ad = ad;
+	}
+
+	public User getBuyer() {
+		return buyer;
+	}
+
+	public void setBuyer(User buyer) {
+		this.buyer = buyer;
+	}
+
+	public User getSeller() {
+		return seller;
+	}
+
+	public void setSeller(User seller) {
+		this.seller = seller;
+	}
 	
 }
