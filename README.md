@@ -1,9 +1,13 @@
-"# bookswap"
+# bookswap
 
-/**
+
 * first commit:
-*
+  No commits were done in the first push.
+  
 * second commit:
-*   source java code added
-**/
+  Source java code added
+  
+* third commit:
+  Get and setters were included
+
 
