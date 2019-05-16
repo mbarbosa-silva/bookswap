@@ -5,15 +5,22 @@
   
 * *Change Log*:
 
-* Commit Track
+* Commit Log
 
-  * first commit:
-  No code was added.
+  * first commit(15/5):
+  Empty Spring boot project.
 
-  * second commit:
-  Source java code added.
+  * second commit(15/5):
+  Model layer created and added to source java code.
   
-  * third commit:
-  Get and setters were included.
+  * third commit(15/5):
+  Get and setters were included in entity model classes.
+  
+  * Fourth commit(16/5):
+    * POM file was modifeid
+      * Maven plugin dependecy was added.
+      * Default packing was changed from .jar to .war.
+    * Hello World controller added.
+    * RoleList Entity added, user entity updated.
 
 
