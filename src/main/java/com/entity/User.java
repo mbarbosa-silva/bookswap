@@ -22,6 +22,8 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Type;
 
+import com.entity.resource.RoleList;
+
 import javax.validation.constraints.NotEmpty;
 
 @Entity(name="user")
@@ -32,14 +34,14 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@Column(name = "firstName", length = 128, nullable = false)
+	@Column(name = "firstName", length = 128, nullable = true)
 	private String firstName;
 	
-	@Column(name = "lastName", length = 128, nullable = false)
+	@Column(name = "lastName", length = 128, nullable = true)
 	private String lastName;
 	
 	@NotEmpty
-	@Column(name = "email", length = 128, nullable = false)
+	@Column(name = "email", length = 128, nullable = true)
     private String email;
 	
 	@NotEmpty
@@ -50,13 +52,16 @@ public class User {
 	@Column(name = "password", length = 30, nullable = false)
     private String password;
 	
-	@Column(name = "enabled", nullable = false)
+	@Column(name = "enabled", nullable = true)
 	@Type( type = "org.hibernate.type.NumericBooleanType")
 	private boolean enabled;
 	
-	@NotEmpty
-	@Column(name = "role", columnDefinition = "varchar(5) DEFAULT 'USER'")
-	private String role;
+//	@NotEmpty
+//	@Column(name = "role", columnDefinition = "varchar(5) DEFAULT 'USER'")
+//	private String role;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	private List<RoleList> roles = new ArrayList<>();
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Campus campus;
@@ -80,7 +85,7 @@ public class User {
 	
 	@OneToMany(mappedBy="seller",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	private List<Invoice> sellHistory;
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -137,12 +142,12 @@ public class User {
 		this.enabled = enabled;
 	}
 
-	public String getRole() {
-		return role;
+	public List<RoleList> getRoles() {
+		return roles;
 	}
 
-	public void setRole(String role) {
-		this.role = role;
+	public void setRoles(List<RoleList> roles) {
+		this.roles = roles;
 	}
 
 	public Campus getCampus() {
