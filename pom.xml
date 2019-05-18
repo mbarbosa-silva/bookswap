@@ -6,9 +6,11 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.app.BookswapApplication</groupId>
-    <artifactId>hibernate</artifactId>
-    <version>1.0.0</version>
+    <artifactId>bookswap</artifactId>
+    <version>0.0.1</version>
     <name>bookswap</name>
+    	<description></description>
+	<packaging>war</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -61,6 +63,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+	          	<groupId>org.apache.maven.plugins</groupId>
+	          	<artifactId>maven-surefire-plugin</artifactId>
+	          	<configuration>
+        			<testFailureIgnore>true</testFailureIgnore>
+    			</configuration>
+        	</plugin>
         </plugins>
     </build>
 

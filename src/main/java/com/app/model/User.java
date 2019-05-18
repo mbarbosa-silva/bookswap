@@ -86,8 +86,6 @@ public class User implements UserDetails {
         this.firstName = firstName;
     }
     
-    
-
     public String getEmail() {
 		return email;
 	}

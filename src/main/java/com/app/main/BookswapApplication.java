@@ -36,8 +36,8 @@ public class BookswapApplication {
         User user = new User(
                 "Memory",
                 "Not Found",
-                "info@memorynotfound.com",
-                passwordEncoder.encode("password"),
+                "PEPE",
+                passwordEncoder.encode("1234"),
                 Arrays.asList(
                         new Role("ROLE_USER"),
                         new Role("ROLE_ADMIN")));
