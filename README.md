@@ -23,4 +23,9 @@
     * Hello World controller added.
     * RoleList Entity added, user entity updated.
 
-
+  * Fifth commit(17/5)
+    * Model layer
+      * User and role entity reformulated
+      * Constraints added
+    * User service layer reformulated
+    * Security config file reformulated
