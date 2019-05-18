@@ -1,7 +1,7 @@
 # bookswap 
 
 * *About*:
-  Android app based on REST architecture, the application is built using java 8, mysql 5.5, spring boot 4, hibernate 5, spring devtools,     spring security, spring data and other technologies.
+  Android app based on REST architecture, the application is built using java 8, mysql 5.5, spring boot 1.5, hibernate 5, spring devtools,     spring security, spring data and other technologies.
   
 * *Change Log*:
 
