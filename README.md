@@ -1,7 +1,7 @@
 # bookswap 
 
 * *About*:
-  Android app based on REST architecture, the application is built using java 8, mysql 5.5, spring boot 4, hibernate 5, spring devtools,     spring security, spring data and other technologies.
+  Android app based on REST architecture, the application is built using java 8, mysql 5.5, spring boot 1.5, hibernate 5, spring devtools,     spring security, spring data and other technologies.
   
 * *Change Log*:
 
@@ -42,4 +42,9 @@
 		* SWAGGER implemented
 			
 
-
+  * Fifth commit(17/5)
+    * Model layer
+      * User and role entity reformulated
+      * Constraints added
+    * User service layer reformulated
+    * Security config file reformulated
