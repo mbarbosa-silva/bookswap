@@ -21,7 +21,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.NotEmpty;
 
-@Entity(name="ad")
+@Entity
 @Table(name="ad")
 public class Ad {
 	

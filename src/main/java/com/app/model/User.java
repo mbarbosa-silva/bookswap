@@ -137,6 +137,60 @@ public class User implements UserDetails {
                 ", roles=" + roles +
                 '}';
     }
+    
+    
+
+	public Campus getCampus() {
+		return campus;
+	}
+
+	public void setCampus(Campus campus) {
+		this.campus = campus;
+	}
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+
+	public List<Address> getAddress() {
+		return address;
+	}
+
+	public void setAddress(List<Address> address) {
+		this.address = address;
+	}
+
+	public List<Ad> getAd() {
+		return ad;
+	}
+
+	public void setAd(List<Ad> ad) {
+		this.ad = ad;
+	}
+
+	public void addAd(Ad ad) {
+		this.ad.add(ad);
+	}
+	
+	public List<Invoice> getBuyHistory() {
+		return buyHistory;
+	}
+
+	public void setBuyHistory(List<Invoice> buyHistory) {
+		this.buyHistory = buyHistory;
+	}
+
+	public List<Invoice> getSellHistory() {
+		return sellHistory;
+	}
+
+	public void setSellHistory(List<Invoice> sellHistory) {
+		this.sellHistory = sellHistory;
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

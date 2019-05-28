@@ -17,8 +17,6 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-
-
 @Entity(name="product")
 @Table(name="product")
 public class Product {

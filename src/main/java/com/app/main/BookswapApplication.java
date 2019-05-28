@@ -20,6 +20,7 @@ import java.util.Arrays;
 @EnableJpaRepositories("com.app.repository")
 @ComponentScan({
 	"com.app.main",
+	"com.app.main.security",
 	"com.app.controller",
 	"com.app.service"
 })
@@ -34,13 +35,13 @@ public class BookswapApplication {
     @PostConstruct
     public void init(){
         User user = new User(
-                "Memory",
+                "user",
                 "Not Found",
-                "PEPE",
+                "User1",
                 passwordEncoder.encode("1234"),
                 Arrays.asList(
-                        new Role("ROLE_USER"),
-                        new Role("ROLE_ADMIN")));
+                        new Role("USER"),
+                        new Role("ADMIN")));
 
         if (userRepository.findByUsername(user.getUsername()) == null){
             userRepository.save(user);

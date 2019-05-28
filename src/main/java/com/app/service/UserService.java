@@ -37,4 +37,22 @@ public class UserService implements UserDetailsService {
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
     }
+    
+    public void save(User user) {   	
+    	userRepository.save(user);
+    }
+    
+    public User findByUserName(String username) throws UsernameNotFoundException{
+    	User user = userRepository.findByUsername(username);
+    	
+        if (user == null){
+            throw new UsernameNotFoundException("user not found");
+        }
+        
+        return user;
+    }
+    
+    public Collection<User> findAll(){
+    	return userRepository.findAll();
+    }
 }
