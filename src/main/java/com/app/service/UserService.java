@@ -1,5 +1,6 @@
 package com.app.service;
 
+import com.app.model.Ad;
 import com.app.model.Role;
 import com.app.model.User;
 import com.app.repository.UserRepository;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,6 +52,11 @@ public class UserService implements UserDetailsService {
         }
         
         return user;
+    }
+    
+    public List<Ad> findAdByUserName(String username) throws UsernameNotFoundException{
+    	User user = userRepository.findByUsername(username);
+    	return user.getAd();
     }
     
     public Collection<User> findAll(){

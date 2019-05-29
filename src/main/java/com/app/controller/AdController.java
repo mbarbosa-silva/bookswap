@@ -3,6 +3,8 @@ package com.app.controller;
 import java.security.Principal;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,15 +33,15 @@ public class AdController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping("producttitle={title}")
+	@GetMapping("findBytitle/{title}")
 	@ResponseBody
 	@ApiOperation(value="Find ad by product name", notes="Query all ads that contains a book entity with a specific name")
 	@ApiResponses(value= {
 			@ApiResponse(code=200, message="List of products"),
 			@ApiResponse(code=400, message="List could not be created")
 	})
-	public List<Ad> findBytitle(@PathVariable String title){
-		return (List<Ad>) adService.findAdByProductTitle(title);
+	public Ad findBytitle(@PathVariable String title){
+		return adService.findAdByProductTitle(title);
 	}
 	
 	@PostMapping("/findbyexample")
@@ -57,18 +59,18 @@ public class AdController {
 	@ResponseBody
 	@ApiOperation(value="Create a new ad", notes="Does a query-by-example operation to get the specific ads")
 	@ApiResponses(value= {
-			@ApiResponse(code=200, message="List of products"),
-			@ApiResponse(code=400, message="List could not be created")
+			@ApiResponse(code=200, message="Ad succefully created"),
+			@ApiResponse(code=400, message="Ad not created")
 	})
+	@Transactional
 	public Ad createNewAd(@RequestBody Ad ad, Principal auth) {
 		try {
-			User user = userService.findByUserName(auth.getName());
+			User user = userService.findByUserName(auth.getName());			
 			ad.setUser(user);
 			user.addAd(ad);
-			adService.save(ad);
-			return ad;
-		
+			return adService.save(ad);
 		} catch (Exception ex) {
+			System.out.print("\nclass: AdController | method: createNewAd \n" + ex.toString());
 			return null;
 		}
 	}

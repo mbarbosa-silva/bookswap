@@ -11,13 +11,16 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-@Entity(name="product")
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+@Entity
 @Table(name="product")
 public class Product {
 
@@ -45,6 +48,8 @@ public class Product {
 	private String description;
 	
 	@OneToOne(mappedBy="product",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(nullable = true)
+	@JsonBackReference
 	private Ad ad;
 	
 	@OneToMany(mappedBy="product",fetch = FetchType.LAZY, cascade = CascadeType.ALL)

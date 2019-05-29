@@ -5,6 +5,8 @@ import javax.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -40,6 +42,7 @@ public class User implements UserDetails {
 	private Campus campus;
 
 	@OneToMany(mappedBy="user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Comment> comments = new ArrayList<>();
 	
 	@ElementCollection(fetch = FetchType.LAZY)
@@ -48,15 +51,19 @@ public class User implements UserDetails {
         @AttributeOverride(name = "addressLine1", column = @Column(name = "street")),
         @AttributeOverride(name = "addressLine2", column = @Column(name = "number"))
     })
+	@JsonIgnore
 	private List<Address> address = new ArrayList<>();
 	
 	@OneToMany(mappedBy="user",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Ad> ad = new ArrayList<>();
 	
 	@OneToMany(mappedBy="buyer",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Invoice> buyHistory;
 	
 	@OneToMany(mappedBy="seller",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Invoice> sellHistory;
 	
     public User() {

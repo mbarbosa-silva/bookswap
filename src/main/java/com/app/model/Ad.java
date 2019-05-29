@@ -19,7 +19,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name="ad")
@@ -29,7 +31,6 @@ public class Ad {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@NotEmpty
 	@Column(name = "price", length = 128, nullable = false)
 	private Double price;
 	
@@ -44,12 +45,14 @@ public class Ad {
 	@Column(name = "ModifiedDate")
 	private Timestamp modifiedDate;
 	
-	@JoinColumn
+	@JoinColumn(nullable = true)
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private Product product;
 	
 	@JoinColumn
 	@ManyToOne(fetch = FetchType.EAGER)
+	@JsonIgnore
 	private User user;
 	
 	@OneToOne(mappedBy="ad")
