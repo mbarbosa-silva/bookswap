@@ -3,8 +3,6 @@ package com.app.model;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 @Embeddable
 public class Address {
 	
@@ -26,7 +24,6 @@ public class Address {
 	@Column(name = "country", length = 128, nullable = false)
 	private String country;
 	
-	@NotEmpty
 	@Column(name = "postalCode", length = 7, nullable = false)
 	private String postalCode;
 

@@ -16,8 +16,6 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.NotEmpty;
-
 
 @Entity(name="invoice")
 @Table(name="invoice")
@@ -27,7 +25,6 @@ public class Invoice {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@NotEmpty
 	@Column(name = "total", length = 30, nullable = false)
 	private Double totalToBePaid;
 	
@@ -38,21 +35,18 @@ public class Invoice {
 	@UpdateTimestamp
 	@Column(name = "ModifiedDate")
 	private Timestamp modifiedDate;
-	
-	@NotEmpty
+
 	@OneToOne(fetch = FetchType.EAGER)
 	private Ad ad;
 	
-	@NotEmpty
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn
 	private User buyer;
-	
-	@NotEmpty
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn
 	private User seller;
-
+	
 	public Long getId() {
 		return id;
 	}
