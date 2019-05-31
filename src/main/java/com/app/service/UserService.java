@@ -7,6 +7,7 @@ import com.app.model.User;
 import com.app.repository.CampusRepository;
 import com.app.repository.RoleRepository;
 import com.app.repository.UserRepository;
+import com.app.repository.VerificationTokenRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,7 +37,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
-        if (user == null){
+        if (user == null || !(user.isEnabled())){
             throw new UsernameNotFoundException("Invalid username or password.");
         }
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
@@ -50,11 +51,12 @@ public class UserService implements UserDetailsService {
                 .collect(Collectors.toList());
     }
     
-    public void createNewUser(User newUser) throws Exception {
-    	try {    		
+    public User createNewUser(User newUser) throws Exception {
+    	try {   
+    		newUser.setEnable(false);
     		newUser.setRoles(getRoles((List<Role>) newUser.getRoles()));
     		newUser.setCampus(getCampus(newUser.getCampus()));
-    		userRepository.save(newUser);
+    		return userRepository.save(newUser);
     	} catch(Exception ex) {
     		throw ex;
     	}
@@ -91,6 +93,10 @@ public class UserService implements UserDetailsService {
     public List<Ad> findAdByUserName(String username) throws UsernameNotFoundException{
     	User user = userRepository.findByUsername(username);
     	return user.getAd();
+    }
+    
+    public void validateUser() {
+    	
     }
     
     public Collection<User> findAll(){

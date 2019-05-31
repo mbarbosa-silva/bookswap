@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
 		http.csrf().disable().authorizeRequests()
 		.antMatchers("/home",
-					"/users/signup",
+					"/users/signup/**",
 					"/swagger-ui.html",
 					"/swagger-resources/**",
 					"/v2/api-docs").permitAll()

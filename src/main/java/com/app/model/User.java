@@ -28,6 +28,8 @@ public class User implements UserDetails {
     private String username;
     private String password;
 
+    private Boolean enable;
+    
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -225,6 +227,10 @@ public class User implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
-		return false;
+		return enable;
+	}
+	
+	public void setEnable(Boolean enable) {
+		this.enable = enable;
 	}
 }

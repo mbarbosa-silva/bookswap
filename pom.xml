@@ -10,7 +10,7 @@
     <version>0.0.1</version>
     <name>bookswap</name>
     <description></description>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -56,6 +56,12 @@
  			<groupId>org.springframework.boot</groupId>
  			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+		
+		<dependency>
+   			<groupId>org.springframework.boot</groupId>
+   			<artifactId>spring-boot-starter-tomcat</artifactId>
+   			<scope>provided</scope>
+		</dependency>
 
         <!-- testing -->
         
@@ -70,7 +76,7 @@
             <scope>test</scope>
         </dependency>
         
-        <!-- jwt, security -->
+        <!-- jwt, security, mail -->
         
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -82,6 +88,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+         
+		<dependency>
+			<groupId>com.sendgrid</groupId>
+			<artifactId>sendgrid-java</artifactId>
+		</dependency>
 
 		<!-- documentation -->
 

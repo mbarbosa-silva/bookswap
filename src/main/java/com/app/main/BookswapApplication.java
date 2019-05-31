@@ -32,21 +32,21 @@ public class BookswapApplication {
     @Autowired
     private UserRepository userRepository;
 
-    @PostConstruct
-    public void init(){
-        User user = new User(
-                "user",
-                "Not Found",
-                "User1",
-                passwordEncoder.encode("1234"),
-                Arrays.asList(
-                        new Role("USER"),
-                        new Role("ADMIN")));
-
-        if (userRepository.findByUsername(user.getUsername()) == null){
-            userRepository.save(user);
-        }
-    }
+//    @PostConstruct
+//    public void init(){
+//        User user = new User(
+//                "user",
+//                "Not Found",
+//                "User1",
+//                passwordEncoder.encode("1234"),
+//                Arrays.asList(
+//                        new Role("USER"),
+//                        new Role("ADMIN")));
+//
+//        if (userRepository.findByUsername(user.getUsername()) == null){
+//            userRepository.save(user);
+//        }
+//    }
 
     public static void main(String[] args) {
         SpringApplication.run(BookswapApplication.class, args);
