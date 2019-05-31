@@ -91,6 +91,7 @@ public class UserController {
     	
     	try {
     		tokenService.validateToken(token);
+    		userService.validateUser(userService.findByUserName(tokenService.getTokenOwner(token)));
     	} catch(Exception ex) {
     		return ResponseEntity.ok().body("User not validate");
     	}

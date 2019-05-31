@@ -95,8 +95,10 @@ public class UserService implements UserDetailsService {
     	return user.getAd();
     }
     
-    public void validateUser() {
-    	
+    public void validateUser(User usr) {
+    		User user = userRepository.findByUsername(usr.getUsername());
+    		user.setEnable(true);
+    		userRepository.save(user);
     }
     
     public Collection<User> findAll(){

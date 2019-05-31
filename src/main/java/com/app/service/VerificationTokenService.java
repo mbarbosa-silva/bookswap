@@ -17,9 +17,6 @@ public class VerificationTokenService {
 
 	@Autowired
 	private VerificationTokenRepository tokenRepository;
-
-	@Autowired
-	private UserRepository userRepository;
 	
 	public String createToken() {
 		return UUID.randomUUID().toString();
@@ -41,7 +38,7 @@ public class VerificationTokenService {
 	
 	public void validateToken(String tkn) throws Exception{
 		
-		VerificationToken token = tokenRepository.findByToken(tkn);
+		VerificationToken token = findByName(tkn);
 		if(token.getExpiredDateTime().isBefore(LocalDateTime.now())) {
 			throw new Exception("Link expired");
 		}
@@ -52,5 +49,8 @@ public class VerificationTokenService {
 		return tokenRepository.findByToken(token);
 	}
 	
+	public String getTokenOwner(String token) {
+		return tokenRepository.findByToken(token).getUser().getUsername();
+	}
 	
 }
