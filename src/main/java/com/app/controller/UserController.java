@@ -52,9 +52,18 @@ public class UserController {
 	}
     
     @PostMapping("/signup")
+	@ApiOperation(value="Insert a new user", notes="Persist a new user in the database")
+	@ApiResponses(value= {
+			@ApiResponse(code=200, message="User created"),
+			@ApiResponse(code=400, message="User could not be created")
+	})
     public void signUp(@RequestBody User newUser) {
     	newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
-    	userService.save(newUser);
+    	try {    	
+    		userService.createNewUser(newUser);
+    	} catch(Exception ex) {
+    		System.out.print("\nclass: UserController | method: SignUp \n" + ex.toString());
+    	}
     }
     
 }

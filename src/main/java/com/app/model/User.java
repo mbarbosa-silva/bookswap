@@ -28,7 +28,7 @@ public class User implements UserDetails {
     private String username;
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(
@@ -51,7 +51,6 @@ public class User implements UserDetails {
         @AttributeOverride(name = "addressLine1", column = @Column(name = "street")),
         @AttributeOverride(name = "addressLine2", column = @Column(name = "number"))
     })
-	@JsonIgnore
 	private List<Address> address = new ArrayList<>();
 	
 	@OneToMany(mappedBy="user",fetch = FetchType.LAZY,cascade = CascadeType.ALL)

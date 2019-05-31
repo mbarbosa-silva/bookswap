@@ -23,7 +23,7 @@ public class Campus {
 	private Long id;
 	
 	@Column(name = "name", length = 128, nullable = false)
-	private String Name;
+	private String name;
 	
 	@Embedded
     @AttributeOverrides({
@@ -39,4 +39,46 @@ public class Campus {
 	
 	@OneToMany(mappedBy = "campus")
 	private List<User> user = new ArrayList<>();
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public School getSchool() {
+		return school;
+	}
+
+	public void setSchool(School school) {
+		this.school = school;
+	}
+
+	public List<User> getUser() {
+		return user;
+	}
+
+	public void setUser(List<User> user) {
+		this.user = user;
+	}
+	
+	
 }
