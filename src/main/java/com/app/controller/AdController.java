@@ -19,10 +19,6 @@ import com.app.model.User;
 import com.app.service.AdService;
 import com.app.service.UserService;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
 @RestController
 @RequestMapping("/ad")
 public class AdController {
@@ -35,33 +31,18 @@ public class AdController {
 
 	@GetMapping("findBytitle/{title}")
 	@ResponseBody
-	@ApiOperation(value="Find ad by product name", notes="Query all ads that contains a book entity with a specific name")
-	@ApiResponses(value= {
-			@ApiResponse(code=200, message="List of products"),
-			@ApiResponse(code=400, message="List could not be created")
-	})
 	public Ad findBytitle(@PathVariable String title){
 		return adService.findAdByProductTitle(title);
 	}
 	
 	@PostMapping("/findbyexample")
 	@ResponseBody
-	@ApiOperation(value="Find ad that matchs with the ad example", notes="Does a query-by-example operation to get the specific ads")
-	@ApiResponses(value= {
-			@ApiResponse(code=200, message="List of products"),
-			@ApiResponse(code=400, message="List could not be created")
-	})
 	public List<Ad> findAdByExample(@RequestBody Ad ad){
 		return adService.findAdByExample(ad);
 	}
 	
 	@PostMapping("/newad")
 	@ResponseBody
-	@ApiOperation(value="Create a new ad", notes="Does a query-by-example operation to get the specific ads")
-	@ApiResponses(value= {
-			@ApiResponse(code=200, message="Ad succefully created"),
-			@ApiResponse(code=400, message="Ad not created")
-	})
 	@Transactional
 	public Ad createNewAd(@RequestBody Ad ad, Principal auth) {
 		try {

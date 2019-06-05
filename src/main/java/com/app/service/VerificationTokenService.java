@@ -1,7 +1,6 @@
 package com.app.service;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.app.model.User;
 import com.app.model.VerificationToken;
-import com.app.repository.UserRepository;
 import com.app.repository.VerificationTokenRepository;
 
 @Service
@@ -36,21 +34,24 @@ public class VerificationTokenService {
 		return token.getToken();
 	}
 	
-	public void validateToken(String tkn) throws Exception{
-		
-		VerificationToken token = findByName(tkn);
-		if(token.getExpiredDateTime().isBefore(LocalDateTime.now())) {
-			throw new Exception("Link expired");
+	public void validateToken(String tkn) throws Exception{	
+		try {
+			VerificationToken token = findByName(tkn);
+			if(token.getExpiredDateTime().isBefore(LocalDateTime.now())) {
+				throw new Exception("Link expired");
+			}
+			tokenRepository.save(token);
+		} catch(Exception ex) {
+			System.out.print("\nclass: VerificationTokenService | method: validateToken \n" + ex.toString());
 		}
-
-	}
-	
-	public VerificationToken findByName(String token) {
-		return tokenRepository.findByToken(token);
 	}
 	
 	public String getTokenOwner(String token) {
-		return tokenRepository.findByToken(token).getUser().getUsername();
+		return findByName(token).getUser().getUsername();
+	}
+
+	public VerificationToken findByName(String token) {
+		return tokenRepository.findByToken(token);
 	}
 	
 }

@@ -10,7 +10,6 @@ import com.sendgrid.Email;
 import com.sendgrid.Mail;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
-import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
 
 @Service
@@ -34,7 +33,7 @@ public class SendGridMailService {
             request.setMethod(Method.POST);
             request.setEndpoint("mail/send");
             request.setBody(mail.build());
-            Response response = this.sendGrid.api(request);
+            this.sendGrid.api(request);
         } catch (IOException ex) {
         }
     }

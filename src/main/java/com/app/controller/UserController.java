@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.security.Principal;
@@ -49,11 +48,6 @@ public class UserController {
     
 	@GetMapping("/findAd")
 	@ResponseBody
-	@ApiOperation(value="Find all ads that belongs to a specific user", notes="Does query to retrive all the ads to belong to a specific user")
-	@ApiResponses(value= {
-			@ApiResponse(code=200, message="List of products"),
-			@ApiResponse(code=400, message="List could not be created")
-	})
 	public List<Ad> findAdByUser(Principal auth){
 		try {
 			return userService.findAdByUserName(auth.getName());
@@ -64,11 +58,6 @@ public class UserController {
 	}
     
     @PostMapping("/signup")
-	@ApiOperation(value="Insert a new user", notes="Persist a new user in the database")
-	@ApiResponses(value= {
-			@ApiResponse(code=200, message="User created"),
-			@ApiResponse(code=400, message="User could not be created")
-	})
     public void signUp(@RequestBody User newUser) {
     	newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
     	ServletUriComponentsBuilder.fromCurrentRequest();
@@ -93,6 +82,7 @@ public class UserController {
     		tokenService.validateToken(token);
     		userService.validateUser(userService.findByUserName(tokenService.getTokenOwner(token)));
     	} catch(Exception ex) {
+    		System.out.print("\nclass: UserController | method: confirmMail \n" + ex.toString());
     		return ResponseEntity.ok().body("User not validate");
     	}
     	

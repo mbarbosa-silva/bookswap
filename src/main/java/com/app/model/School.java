@@ -14,8 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 
 @Entity
 @Table
@@ -25,7 +23,6 @@ public class School {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@NotEmpty
 	@Column(name = "Name", length = 128, nullable = false)
 	private String Name;
 	

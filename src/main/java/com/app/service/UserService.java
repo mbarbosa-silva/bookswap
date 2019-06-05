@@ -7,7 +7,6 @@ import com.app.model.User;
 import com.app.repository.CampusRepository;
 import com.app.repository.RoleRepository;
 import com.app.repository.UserRepository;
-import com.app.repository.VerificationTokenRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -96,9 +95,13 @@ public class UserService implements UserDetailsService {
     }
     
     public void validateUser(User usr) {
+    	try{
     		User user = userRepository.findByUsername(usr.getUsername());
     		user.setEnable(true);
     		userRepository.save(user);
+    	} catch(Exception ex) {
+    		System.out.print("\nclass: UserService | method: validateUser \n" + ex.toString());
+    	}
     }
     
     public Collection<User> findAll(){
