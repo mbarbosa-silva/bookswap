@@ -6,10 +6,6 @@ import com.app.service.UserService;
 import com.app.service.VerificationTokenService;
 import com.app.service.SendGridMailService;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,7 +22,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
     
     @Autowired
@@ -56,7 +52,7 @@ public class UserController {
 			return null;
 		}
 	}
-    
+    	
     @PostMapping("/signup")
     public void signUp(@RequestBody User newUser) {
     	newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));

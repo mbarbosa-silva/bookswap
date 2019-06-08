@@ -43,6 +43,7 @@ public class VerificationTokenService {
 			tokenRepository.save(token);
 		} catch(Exception ex) {
 			System.out.print("\nclass: VerificationTokenService | method: validateToken \n" + ex.toString());
+			throw ex;
 		}
 	}
 	

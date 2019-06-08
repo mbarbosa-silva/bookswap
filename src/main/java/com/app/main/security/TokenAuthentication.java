@@ -27,6 +27,7 @@ public class TokenAuthentication {
 					.compact();
 			
 			response.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
+			
 		}
 		
 		static Authentication getAuthentication(HttpServletRequest request) {

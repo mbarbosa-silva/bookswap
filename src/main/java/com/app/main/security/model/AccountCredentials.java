@@ -1,4 +1,4 @@
-package com.app.main.security;
+package com.app.main.security.model;
 
 public class AccountCredentials {
 	
