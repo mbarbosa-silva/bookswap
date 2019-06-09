@@ -14,11 +14,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +34,9 @@ public class UserService implements UserDetailsService {
     
     @Autowired
     private CampusRepository campusRepository;
+    
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -56,6 +61,14 @@ public class UserService implements UserDetailsService {
     		newUser.setRoles(getRoles((List<Role>) newUser.getRoles()));
     		newUser.setCampus(getCampus(newUser.getCampus()));
     		return userRepository.save(newUser);
+    	} catch(Exception ex) {
+    		throw ex;
+    	}
+    }
+    
+    public User save(User user) {
+    	try {   
+    		return userRepository.save(user);
     	} catch(Exception ex) {
     		throw ex;
     	}
@@ -102,6 +115,33 @@ public class UserService implements UserDetailsService {
     	} catch(Exception ex) {
     		System.out.print("\nclass: UserService | method: validateUser \n" + ex.toString());
     	}
+    }
+    
+    public String resetPassword(User usr) {
+    	try{
+    		User user = userRepository.findByUsername(usr.getUsername());
+    	    int leftLimit = 97; // letter 'a'
+    	    int rightLimit = 122; // letter 'z'
+    	    int targetStringLength = 15;
+    	    Random random = new Random();
+    	    StringBuilder buffer = new StringBuilder(targetStringLength);
+    	    for (int i = 0; i < targetStringLength; i++) {
+    	        int randomLimitedInt = leftLimit + (int) 
+    	          (random.nextFloat() * (rightLimit - leftLimit + 1));
+    	        buffer.append((char) randomLimitedInt);
+    	    }
+    	    String generatedString = buffer.toString();
+    	    
+    	    user.setPassword(bCryptPasswordEncoder.encode(generatedString));
+
+    		userRepository.save(user);
+    		
+    		return generatedString;
+    		
+    	} catch(Exception ex) {
+    		return null;
+    	}
+	
     }
     
     public Collection<User> findAll(){
