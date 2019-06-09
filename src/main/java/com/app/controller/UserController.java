@@ -51,12 +51,12 @@ public class UserController {
         return (List<User>) userService.findAll();
     }
     
-	@GetMapping("/findAd")
+	@GetMapping("/find/ad/{username}")
 	@ResponseBody
-	public List<Ad> findAdByUser(Principal auth){
+	public List<Ad> findAdByUsername(@PathVariable String username){
 		try {
-			return userService.findAdByUserName(auth.getName());
-		} catch(Exception ex) {
+			return userService.findAdByUserName(username);
+		} catch(Exception ex) {	
 			System.out.print("\nclass: UserController | method: findAdByUser \n" + ex.toString());
 			return null;
 		}
@@ -90,6 +90,7 @@ public class UserController {
     		/**
     		 * TODO: delete token after its use
     		 */
+    		tokenService.deleteToken(token);
     		return ResponseEntity.ok().body(gson.toJson(new StdResponse("200", "-", "Confirmation sent", "/signup/confirm/{token}")));
     	} catch(Exception ex) {
     		return ResponseEntity.badRequest().body(gson.toJson(new StdResponse("400", ex.toString(), "Confirmation not sent", "/signup/confirm/{token}")));
@@ -138,9 +139,6 @@ public class UserController {
     	try {    	
     		String token = tokenService.generateToken(user);
     		mailService.ResetPasswordMail(user, token, url);
-    		/**
-    		 * TODO: delete token after its use
-    		 */
     		return ResponseEntity.ok().body(gson.toJson(new StdResponse("200", "-", "Email sent to reset password", "/update/request/changepassword/{username}")));
     	} catch(Exception ex) {
     		return ResponseEntity.badRequest().body(gson.toJson(new StdResponse("400", ex.toString(), "Could not send reset password Email", "/update/request/changepassword/{username}")));
@@ -156,10 +154,17 @@ public class UserController {
     		/**
     		 * TODO: delete token after its use
     		 */
+    		tokenService.deleteToken(token);
     		return ResponseEntity.ok().body(gson.toJson(new StdResponse("200", "-", "Reset password mail trigger", "/update/request/changepassword/{username}/{token}")));
     	} catch(Exception ex) {
     		return ResponseEntity.badRequest().body(gson.toJson(new StdResponse("400", ex.toString(), "Could not send password mail trigger", "/update/request/changepassword/{username}/{token}")));
     	}
+    }
+    
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
+    public ResponseEntity<User> findByUsername(@PathVariable String username){
+    	var user = userService.findByUserName(username);
+    	return ResponseEntity.ok().body(user);
     }
    
 }

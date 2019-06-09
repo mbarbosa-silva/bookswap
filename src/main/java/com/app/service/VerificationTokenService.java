@@ -47,6 +47,12 @@ public class VerificationTokenService {
 		}
 	}
 	
+	public void deleteToken(String tkn) {
+		VerificationToken token = findByName(tkn);
+		token.setToken(null);
+		tokenRepository.save(token);
+	}
+	
 	public String getTokenOwner(String token) {
 		return findByName(token).getUser().getUsername();
 	}

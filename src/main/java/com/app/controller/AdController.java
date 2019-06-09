@@ -29,24 +29,24 @@ public class AdController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping("findBytitle/{title}")
+	@GetMapping("/find/Bytitle/{title}")
 	@ResponseBody
 	public Ad findBytitle(@PathVariable String title){
 		return adService.findAdByProductTitle(title);
 	}
 	
-	@PostMapping("/findbyexample")
+	@GetMapping("/find/example")
 	@ResponseBody
 	public List<Ad> findAdByExample(@RequestBody Ad ad){
 		return adService.findAdByExample(ad);
 	}
 	
-	@PostMapping("/newad")
+	@PostMapping("/create/{username}")
 	@ResponseBody
 	@Transactional
-	public Ad createNewAd(@RequestBody Ad ad, Principal auth) {
+	public Ad createNewAd(@RequestBody Ad ad, @PathVariable String username) {
 		try {
-			User user = userService.findByUserName(auth.getName());			
+			User user = userService.findByUserName(username);			
 			ad.setUser(user);
 			user.addAd(ad);
 			return adService.save(ad);
