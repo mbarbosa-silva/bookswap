@@ -79,6 +79,16 @@ public class Campus {
 	public void setUser(List<User> user) {
 		this.user = user;
 	}
+
+	public Campus(Long id, String name, Address address, School school, List<User> user) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.address = address;
+		this.school = school;
+		this.user = user;
+	}
 	
+	public Campus() {}
 	
 }

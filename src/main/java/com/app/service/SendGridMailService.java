@@ -22,10 +22,26 @@ public class SendGridMailService {
     }
 
     public void ConfirmAccountMail(User User, String verificationCode, String url) {
+    	sendMail(User.getEmail(),
+    			"please, click on the link to confirm your registration : ",
+    			"Confirm account creation",
+    			url + "/confirm/",
+    			verificationCode);
+    }
+    
+    public void ResetPasswordMail(User User, String verificationCode, String url) {
+    	sendMail(User.getEmail(),
+    			"please, click on the link to confirm your password change : ",
+    			"password change",
+    			url + "/",
+    			verificationCode);
+    }
+    
+    private void sendMail(String email,String message, String topic, String url, String verificationCode) {
         Email from = new Email("do-not-reply@bookswap.com");
-        String subject = "Confirm account creation";
-        Email to = new Email(User.getEmail());
-        Content content = new Content("text/plain", "please, click on the link to confirm your registration : " + url + "/confirm/" + verificationCode);
+        String subject = topic;
+        Email to = new Email(email);
+        Content content = new Content("text/plain",message  + url + verificationCode);
         Mail mail = new Mail(from, subject, to, content);
 
         Request request = new Request();
@@ -37,4 +53,22 @@ public class SendGridMailService {
         } catch (IOException ex) {
         }
     }
+    
+    public void SendNewPassword(User User, String password) {
+        Email from = new Email("do-not-reply@bookswap.com");
+        String subject = "New Password";
+        Email to = new Email(User.getEmail());
+        Content content = new Content("text/plain","your new password : " + password);
+        Mail mail = new Mail(from, subject, to, content);
+
+        Request request = new Request();
+        try {
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+            this.sendGrid.api(request);
+        } catch (IOException ex) {
+        }
+    }
+    
 }

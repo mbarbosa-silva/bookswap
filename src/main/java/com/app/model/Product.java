@@ -44,8 +44,8 @@ public class Product {
 	@Column(name = "description", length = 255, nullable = false)
 	private String description;
 	
-	@OneToOne(mappedBy="product",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(nullable = true)
+	@OneToOne(mappedBy="product",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(nullable = false)
 	@JsonBackReference
 	private Ad ad;
 	

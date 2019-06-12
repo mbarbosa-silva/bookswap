@@ -82,5 +82,19 @@ public class Address {
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
 	}
+
+	public Address(String addressLine1, String addressLine2, String addressLine3, String city, String province,
+			String country, String postalCode) {
+		super();
+		this.addressLine1 = addressLine1;
+		this.addressLine2 = addressLine2;
+		this.addressLine3 = addressLine3;
+		this.city = city;
+		this.province = province;
+		this.country = country;
+		this.postalCode = postalCode;
+	}
+	
+	public Address() {}
 	
 }

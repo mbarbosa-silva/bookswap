@@ -33,16 +33,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
 		http.csrf().disable().authorizeRequests()
 		.antMatchers("/home",
-					"/users/signup/**",
-					"/swagger-ui.html",
-					"/swagger-resources/**",
-					"/v2/api-docs").permitAll()
-		.antMatchers(HttpMethod.POST, "/login").permitAll()
+					"/user/signup/**",
+					"/user/update/request/changepassword/**").permitAll()
+		.antMatchers(HttpMethod.POST, "/user/login").permitAll()
 		.anyRequest().authenticated()
 		.and()
 		
 		// filter Login request
-		.addFilterBefore(new JWTLoginFilter("/login", authenticationManager()),
+		.addFilterBefore(new JWTLoginFilter("/user/login", authenticationManager()),
                 UsernamePasswordAuthenticationFilter.class)
 		
 		// filter other requests
