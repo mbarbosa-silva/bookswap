@@ -41,7 +41,7 @@ public class TokenAuthentication {
 						.getBody()
 						.getSubject();
 				
-				if (user != null) {
+				if (user != null) {					
 					return new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
 				}
 			}

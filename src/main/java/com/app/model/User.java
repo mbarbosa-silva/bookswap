@@ -47,13 +47,12 @@ public class User implements UserDetails {
 	@JsonIgnore
 	private List<Comment> comments = new ArrayList<>();
 	
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "user_address", joinColumns = @JoinColumn(name = "user_id"))
+	@Embedded
     @AttributeOverrides({
         @AttributeOverride(name = "addressLine1", column = @Column(name = "street")),
         @AttributeOverride(name = "addressLine2", column = @Column(name = "number"))
     })
-	private List<Address> address = new ArrayList<>();
+	private Address address;
 	
 	@OneToMany(mappedBy="user",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	@JsonIgnore
@@ -164,11 +163,11 @@ public class User implements UserDetails {
 		this.comments = comments;
 	}
 
-	public List<Address> getAddress() {
+	public Address getAddress() {
 		return address;
 	}
 
-	public void setAddress(List<Address> address) {
+	public void setAddress(Address address) {
 		this.address = address;
 	}
 

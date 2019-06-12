@@ -2,6 +2,10 @@ package com.app.controller;
 
 import com.app.controller.model.StdResponse;
 import com.app.model.Ad;
+import com.app.model.Address;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import com.app.model.User;
 import com.app.service.UserService;
 import com.app.service.VerificationTokenService;
@@ -12,6 +16,7 @@ import com.app.service.SendGridMailService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,10 +32,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/user")
-public class UserController {
+public class UserController extends Controller {
     
     @Autowired
     private UserService userService;
@@ -50,17 +58,6 @@ public class UserController {
     public List<User> getUsers(){
         return (List<User>) userService.findAll();
     }
-    
-	@GetMapping("/find/ad/{username}")
-	@ResponseBody
-	public List<Ad> findAdByUsername(@PathVariable String username){
-		try {
-			return userService.findAdByUserName(username);
-		} catch(Exception ex) {	
-			System.out.print("\nclass: UserController | method: findAdByUser \n" + ex.toString());
-			return null;
-		}
-	}
     	
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@RequestBody User newUser) {
@@ -83,32 +80,26 @@ public class UserController {
     
     @GetMapping("/signup/confirm/{token}")
     public ResponseEntity<String> confirmMail(@PathVariable String token) {
-    	
     	try {
     		tokenService.validateToken(token);
     		userService.validateUser(userService.findByUserName(tokenService.getTokenOwner(token)));
-    		/**
-    		 * TODO: delete token after its use
-    		 */
     		tokenService.deleteToken(token);
     		return ResponseEntity.ok().body(gson.toJson(new StdResponse("200", "-", "Confirmation sent", "/signup/confirm/{token}")));
     	} catch(Exception ex) {
     		return ResponseEntity.badRequest().body(gson.toJson(new StdResponse("400", ex.toString(), "Confirmation not sent", "/signup/confirm/{token}")));
     	}
-    	
     }
     
     @RequestMapping(value = "/update/{username}", method = RequestMethod.PATCH)
-    public ResponseEntity<String> updateUserInfo(@PathVariable String username, @RequestBody Map<Object, Object> fields){
+    public ResponseEntity<String> updateUserInfo(@PathVariable String username, @RequestBody Map<Object, Object> fields, Principal principal){
     	try {
+    		
+    		checkTokenOwnership(username, principal);
     		var user = userService.findByUserName(username);
-    		fields.forEach((k, v) -> {
-    			Field field = ReflectionUtils.findField(User.class, (String) k);
-    			field.setAccessible(true);
-        	ReflectionUtils.setField(field, user, v);
-    		});  	
-    		userService.save(user);
+    		userService.updateUser(user, fields);
+    		
     		return ResponseEntity.ok().body(gson.toJson(new StdResponse("200", "-", "User updated", "/update/{username}")));
+    	
     	} catch(Exception ex) {
     		return ResponseEntity.badRequest().body(gson.toJson(new StdResponse("400", ex.toString(), "User not updated", "/update/{username}")));
     	}
@@ -116,16 +107,23 @@ public class UserController {
     }
     
     @RequestMapping(value = "/update/password/{username}", method = RequestMethod.PATCH)
-    public ResponseEntity<String> updateUserPassword(@PathVariable String username, @RequestBody String newPassword){       	
+    public ResponseEntity<String> updateUserPassword(@PathVariable String username, @RequestBody String newPassword, Principal principal){       	
     	var user = userService.findByUserName(username); 
+    	
     	try {
+    		
+    		checkTokenOwnership(username, principal);
     		String newPasswordEncoded = bCryptPasswordEncoder.encode(newPassword);
+    		
     		if(bCryptPasswordEncoder.matches(newPassword, user.getPassword())) {
     			throw new Exception("invalid password");
     		}
+    		
     		user.setPassword(newPasswordEncoded);
     		userService.save(user);
+    		
     		return ResponseEntity.ok().body(gson.toJson(new StdResponse("200", "-", "Password changed", "/update/password/{username}")));
+    	
     	} catch(Exception ex) {
     		return ResponseEntity.badRequest().body(gson.toJson(new StdResponse("400", ex.toString(), "Password not changed", "/update/password/{username}")));
     	}
@@ -133,28 +131,33 @@ public class UserController {
     
     @RequestMapping(value = "/update/request/changepassword/{username}", method = RequestMethod.GET)
     public ResponseEntity<String> requestPasswordChange(@PathVariable String username) {
-    	var user = userService.findByUserName(username);
-    	ServletUriComponentsBuilder.fromCurrentRequest();
-    	String url = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
-    	try {    	
+    	try { 
+    		var user = userService.findByUserName(username);
+    		
+    		ServletUriComponentsBuilder.fromCurrentRequest();
+    		String url = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
+    	   	
     		String token = tokenService.generateToken(user);
+    		
     		mailService.ResetPasswordMail(user, token, url);
     		return ResponseEntity.ok().body(gson.toJson(new StdResponse("200", "-", "Email sent to reset password", "/update/request/changepassword/{username}")));
+    	
     	} catch(Exception ex) {
     		return ResponseEntity.badRequest().body(gson.toJson(new StdResponse("400", ex.toString(), "Could not send reset password Email", "/update/request/changepassword/{username}")));
     	}
     }
     
     @RequestMapping(value = "/update/request/changepassword/{username}/{token}", method = RequestMethod.GET)
-    public ResponseEntity<String> confirmChangePasswordMail(@PathVariable String token,@PathVariable String username) {
-    	try {    	
+    public ResponseEntity<String> confirmChangePasswordMail(@PathVariable String token,@PathVariable String username, Principal principal) {
+    	try {
+    		checkTokenOwnership(username, principal);
     		var user = userService.findByUserName(username);
+    		
     		String password = userService.resetPassword(user);	
+    		
     		mailService.SendNewPassword(user, password);
-    		/**
-    		 * TODO: delete token after its use
-    		 */
     		tokenService.deleteToken(token);
+    		
     		return ResponseEntity.ok().body(gson.toJson(new StdResponse("200", "-", "Reset password mail trigger", "/update/request/changepassword/{username}/{token}")));
     	} catch(Exception ex) {
     		return ResponseEntity.badRequest().body(gson.toJson(new StdResponse("400", ex.toString(), "Could not send password mail trigger", "/update/request/changepassword/{username}/{token}")));
@@ -162,9 +165,20 @@ public class UserController {
     }
     
     @RequestMapping(value = "/{username}", method = RequestMethod.GET)
-    public ResponseEntity<User> findByUsername(@PathVariable String username){
-    	var user = userService.findByUserName(username);
-    	return ResponseEntity.ok().body(user);
+    public ResponseEntity<User> findByUsername(@PathVariable String username,Principal principal){
+    	try {
+
+    		checkTokenOwnership(username, principal);
+	    	var user = userService.findByUserName(username);
+	    	return ResponseEntity.ok().body(user);
+		
+    	} catch (Exception e) {
+		
+    		e.printStackTrace();
+			return null;
+		
+    	}
+
     }
    
 }

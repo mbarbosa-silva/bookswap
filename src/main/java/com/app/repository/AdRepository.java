@@ -10,4 +10,5 @@ import com.app.model.Ad;
 @Repository
 public interface AdRepository extends JpaRepository<Ad, Long> {
 	public Ad findByProductTitle(String title);
+	public Ad findAdById(Long Id);
 }

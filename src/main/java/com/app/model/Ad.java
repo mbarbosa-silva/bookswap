@@ -45,7 +45,7 @@ public class Ad {
 	@Column(name = "ModifiedDate")
 	private Timestamp modifiedDate;
 	
-	@JoinColumn(nullable = true)
+	@JoinColumn(nullable = false)
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private Product product;

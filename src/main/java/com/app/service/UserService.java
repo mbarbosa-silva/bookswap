@@ -1,6 +1,7 @@
 package com.app.service;
 
 import com.app.model.Ad;
+import com.app.model.Address;
 import com.app.model.Campus;
 import com.app.model.Role;
 import com.app.model.User;
@@ -16,10 +17,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -74,7 +82,7 @@ public class UserService implements UserDetailsService {
     	}
     }
     
-    private Campus getCampus(Campus campus) {
+    public Campus getCampus(Campus campus) {
     	return campusRepository.findByName(campus.getName());
     }
     
@@ -100,11 +108,6 @@ public class UserService implements UserDetailsService {
         }
         
         return user;
-    }
-    
-    public List<Ad> findAdByUserName(String username) throws UsernameNotFoundException{
-    	User user = userRepository.findByUsername(username);
-    	return user.getAd();
     }
     
     public void validateUser(User usr) {
@@ -148,4 +151,25 @@ public class UserService implements UserDetailsService {
     	return userRepository.findAll();
     }
 
+    public void updateUser(User user,Map<Object, Object> fields) throws Exception{
+
+//		fields.forEach((k,v) -> System.out.println("key: "+k+" value:"+v.getClass()));
+		fields.forEach((k, v) -> {
+			if(v.getClass() == LinkedHashMap.class && k == "address") {
+				((HashMap<Object, Object>) v).forEach((t,y)->{
+					Field field = ReflectionUtils.findField(Address.class, (String) t);
+					field.setAccessible(true);
+					ReflectionUtils.setField(field,user.getAddress(), y );
+				});
+			} else {
+				Field field = ReflectionUtils.findField(User.class, (String) k);
+				field.setAccessible(true);
+				ReflectionUtils.setField(field, user, v);
+			}
+		});  	
+		
+		this.save(user);
+    
+    }
+    
 }

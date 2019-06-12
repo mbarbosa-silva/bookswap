@@ -69,7 +69,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 		
 		response.setStatus(200);
 		TokenAuthentication.addAuthentication(response, auth.getName());
-		this.SetResponseJsonBody(response,"potato","potato","potato","potato");
+		this.SetResponseJsonBody(response,"200","-","succeful login","user/login");
 
 	}
 	
@@ -78,7 +78,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
             AuthenticationException failed) throws IOException, ServletException {
 		
 		response.setStatus(401);
-		this.SetResponseJsonBody(response,"potato2","potato2","potato2","potat2o");
+		this.SetResponseJsonBody(response,"400","-","password or username incorrect","user/login");
     }
 
 }
