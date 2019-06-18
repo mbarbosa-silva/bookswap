@@ -1,82 +1,215 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: http://myvmlab.senecacollege.ca:6510/bookswap-0.0.1
 
 # Bookswap
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+This is the documentation for the bookswap application API.
 
+## User [/user]
 
-
-## Questions Collection [/questions]
-
-### List All Questions [GET]
-
-+ Response 200 (application/json)
-
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
-
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+### Login [GET /user/login]
 
 + Request (application/json)
+        
+            {
+                "username":"username_example",
+                "password":"password_example"
+            }
 
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
-
-+ Response 201 (application/json)
++ Response 200 (application/json)   
 
     + Headers
 
-            Location: /questions/2
+            Location: user/login
+            Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyX2V4NSIsImV4cCI6MTU2MTY4OTE2M30.B7aKpfG9i0Wdb5P68IYL-bkbMT8e_ff6I-N86806HzWxYxAQ5aoOW8eSQPY7TqQgkHgMsc7CZqzBZ1eVuvhCHg
 
     + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
+                "status": "200",
+                "error": "-",
+                "message": "succeful login",
+                "path": "user/login"
+            }
+            
++ Response 401 (application/json)   
+
+    + Headers
+
+            Location: user/login
+            
+    + Body
+
+            {
+                "status": "400",
+                "error": "-",
+                "message": "password or username incorrect",
+                "path": "user/login"
+            }
+            
+### Create a new User [POST /user/signup]
+
+You may create a new user account using this action. It takes a JSON
+object containing a user object 
+
++ Request (application/json)
+
+        {
+            "email": "email_example@gmail.com",
+            "username": "username_example",
+            "password": "password_example",
+            "roles": [
+                {
+                    "name": "USER"
+                }
+            ],
+            "campus": {
+                "name" : "seneca@york"
+            },
+            "address": 
+                {
+                    "addressLine1": "address street",
+                    "addressLine2": "number",
+                    "addressLine3": null,
+                    "city": "toronto",
+                    "province": "Ontario",
+                    "country": "Canada",
+                    "postalCode": "m1xh3n"
+            }
+        
+        }
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: user/signup
+
+    + Body
+
+            {
+                "status": "200",
+                "error": "No error",
+                "message": "User created",
+                "path": "user/signup"
+            }
+            
++ Response 400 (application/json)
+
+    + Headers
+
+            Location: user/signup
+
+    + Body
+
+            {
+                "status": "400",
+                "error": "org.springframework.dao.DataIntegrityViolationException: could not execute statement; SQL [n/a]; constraint [UKsb8bbouer5wak8vyiiy4pf2bx]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement",
+                "message": "User not created",
+                "path": "user/signup"
+            }
+
+### Confirm new account [GET /user/signup/confirm/{token}]
+
+A mail is sent to the user's mail contaning a link to validate the new account.
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: /signup/confirm/{token}
+
+    + Body
+
+            {
+                "status":"200",
+                "error":"-",
+                "message":"Account validated",
+                "path":"/signup/confirm/{token}"
+            }
+
++ Response 400 (application/json)
+
+    + Headers
+    
+            Location: /signup/confirm/{token}
+        
+    + Body 
+    
+            {
+                "status":"400",
+                "error":"java.lang.NullPointerException",
+                "message":"Confirmation not sent",
+                "path":"/signup/confirm/{token}"
+            }  
+            
+### Update user information [PATCH /user/update/{username}]
+
++ Request (application/json)
+
+    + Body
+
+            {
+                "address":
                     {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
+                        "addressLine1": "sdnajntkd",
+                        "addressLine2": "sdddjdjwsajbdsn",
+                        "addressLine3": null,
+                        "city": "torronto",
+                        "province": "sadjadsn",
+                        "country": "sddasdarsd",
+                        "postalCode": "dafh"                    
                     }
-                ]
+            }
+            
+    + Headers   
+    
+            Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyX2V4NSIsImV4cCI6MTU2MTY4OTU5N30.gnqT5FAIeBhkECgS7RUYI2drV9NpQlzCXEPqdHPOa2MpueC0a8mxoXsWKg8NVw9T8DWgjgX_cFGtjpJwtA9-Rw
+            
++ Response 200 (application/json)
+
+    + Headers
+
+            Location: user/update/{username}
+        
+    + Body
+
+            {
+                "status":"200",
+                "error":"-",
+                "message":"User updated",
+                "path": "/update/{username}"
+            }
+
++ Response 400 (application/json)
+
+    + Headers
+    
+            Location: user/update/{username}
+         
+    + Body 
+    
+            {
+                "status": "400",
+                "error": "java.lang.NullPointerException",
+                "message": "User not updated",
+                "path": "/update/{username}"
+            } 
+            
++ Response 500 (application/json)
+
+    + Headers
+    
+            Location: user/update/{username}
+
+    + Body 
+    
+            {
+                "timestamp": "2019-06-18T04:12:20.417+0000",
+                "status": 500,
+                "error": "Internal Server Error",
+                "message": "Unable to read JSON value: {\"amȎ\ufffd\ufffd\u0014\ufffdLL\ufffd\ufffd",
+                "path": "/bookswap-0.0.1/user/update/user_ex5"
             }
