@@ -11,6 +11,8 @@ import com.app.service.UserService;
 import com.app.service.VerificationTokenService;
 import com.google.gson.Gson;
 import java.lang.reflect.Field;
+
+import com.app.service.FileService;
 import com.app.service.SendGridMailService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +27,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.security.Principal;
@@ -60,7 +64,7 @@ public class UserController extends Controller {
     }
     	
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestBody User newUser) {
+    public ResponseEntity<String> signUp(@RequestParam("file") MultipartFile file,@RequestBody User newUser) {
     	newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
     	ServletUriComponentsBuilder.fromCurrentRequest();
     	String url = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
@@ -148,9 +152,9 @@ public class UserController extends Controller {
     }
     
     @RequestMapping(value = "/update/request/changepassword/{username}/{token}", method = RequestMethod.GET)
-    public ResponseEntity<String> confirmChangePasswordMail(@PathVariable String token,@PathVariable String username, Principal principal) {
+    public ResponseEntity<String> confirmChangePasswordMail(@PathVariable String token,@PathVariable String username) {
     	try {
-    		checkTokenOwnership(username, principal);
+    		//checkTokenOwnership(username, principal);
     		var user = userService.findByUserName(username);
     		
     		String password = userService.resetPassword(user);	

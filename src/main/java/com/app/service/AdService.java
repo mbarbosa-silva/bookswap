@@ -35,8 +35,8 @@ public class AdService {
 	@Autowired
 	private UserRepository userRepository;
 		
-	public Ad findAdByProductTitle(String title){		
-		return adRepostirory.findByProductTitle(title);
+	public List<Ad> findAdByProductTitle(String title){		
+		return adRepostirory.findByProductTitleIgnoreCaseContaining(title);
 	}
 	
 	public Ad findAdById(String id) {
@@ -120,8 +120,7 @@ public class AdService {
     					Field field = ReflectionUtils.findField(Product.class, (String) t);
     					field.setAccessible(true);
     					ReflectionUtils.setField(field,ad.getProduct(), y );
-    				});
-    				
+    				});	
     			} else {
     				Field field = ReflectionUtils.findField(Ad.class, (String) k);
 					field.setAccessible(true);

@@ -3,12 +3,14 @@ package com.app.service;
 import com.app.model.Ad;
 import com.app.model.Address;
 import com.app.model.Campus;
+import com.app.model.File;
 import com.app.model.Role;
 import com.app.model.User;
 import com.app.repository.CampusRepository;
 import com.app.repository.RoleRepository;
 import com.app.repository.UserRepository;
 
+import org.mockito.stubbing.ValidableAnswer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -161,6 +163,10 @@ public class UserService implements UserDetailsService {
 					field.setAccessible(true);
 					ReflectionUtils.setField(field,user.getAddress(), y );
 				});
+				
+			} else if(v.getClass() == LinkedHashMap.class && k == "campus") {	
+				String newCampusName = (String) (((HashMap<Object, Object>) v).get("name"));
+				user.setCampus(campusRepository.findByName(newCampusName));
 			} else {
 				Field field = ReflectionUtils.findField(User.class, (String) k);
 				field.setAccessible(true);
@@ -170,6 +176,12 @@ public class UserService implements UserDetailsService {
 		
 		this.save(user);
     
+    }
+    
+    public void setUserPhoto(File file, String username) {
+    	User user = findByUserName(username);
+    	user.setPhoto(file);
+    	this.save(user);
     }
     
 }

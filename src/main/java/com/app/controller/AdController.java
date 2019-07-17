@@ -39,7 +39,7 @@ public class AdController extends Controller {
 	
 	@GetMapping("/find/Bytitle/{title}")
 	@ResponseBody
-	public Ad findBytitle(@PathVariable String title){
+	public List<Ad> findBytitle(@PathVariable String title){
 		return adService.findAdByProductTitle(title);
 	}
 	

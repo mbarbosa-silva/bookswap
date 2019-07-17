@@ -66,6 +66,9 @@ public class User implements UserDetails {
 	@JsonIgnore
 	private List<Invoice> sellHistory;
 	
+	@OneToOne
+	private File photo;
+	
     public User() {
     }
 
@@ -232,4 +235,13 @@ public class User implements UserDetails {
 	public void setEnable(Boolean enable) {
 		this.enable = enable;
 	}
+
+	public File getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(File photo) {
+		this.photo = photo;
+	}
+
 }
