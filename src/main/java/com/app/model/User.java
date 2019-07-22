@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -134,21 +135,7 @@ public class User implements UserDetails {
 
     public void setRoles(Collection<Role> roles) {
         this.roles = roles;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + "*********" + '\'' +
-                ", roles=" + roles +
-                '}';
-    }
-    
-    
+    }    
 
 	public Campus getCampus() {
 		return campus;
@@ -201,6 +188,14 @@ public class User implements UserDetails {
 	public void setSellHistory(List<Invoice> sellHistory) {
 		this.sellHistory = sellHistory;
 	}
+	
+	public File getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(File photo) {
+		this.photo = photo;
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -236,12 +231,12 @@ public class User implements UserDetails {
 		this.enable = enable;
 	}
 
-	public File getPhoto() {
-		return photo;
-	}
-
-	public void setPhoto(File photo) {
-		this.photo = photo;
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
+				+ ", username=" + username + ", password=" + password + ", enable=" + enable + ", roles=" + roles
+				+ ", campus=" + campus + ", comments=" + comments + ", address=" + address + ", ad=" + ad
+				+ ", buyHistory=" + buyHistory + ", sellHistory=" + sellHistory + ", photo=" + photo + "]";
 	}
 
 }

@@ -14,12 +14,16 @@ import org.springframework.data.domain.Example;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.app.model.Ad;
 import com.app.model.Address;
+import com.app.model.File;
 import com.app.model.Product;
 import com.app.model.User;
 import com.app.repository.AdRepository;
+import com.app.repository.FileRepository;
 import com.app.repository.ProductRepository;
 import com.app.repository.UserRepository;
 
@@ -34,6 +38,9 @@ public class AdService {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+    @Autowired
+    private FileRepository fileRepository;
 		
 	public List<Ad> findAdByProductTitle(String title){		
 		return adRepostirory.findByProductTitleIgnoreCaseContaining(title);
@@ -79,6 +86,42 @@ public class AdService {
 			return adRepostirory.findAll(adExample);
 		}
 	}
+	
+	public Ad createNewAd(Ad newAd, MultipartFile newAdPhoto, User user) throws Exception {
+		try {
+			
+			newAd.setUser(user);
+			user.addAd(newAd);
+		
+			if(newAdPhoto != null) {
+				File file = storeNewPhoto(newAdPhoto);
+				newAd.getProduct().setPhoto(file);
+			}
+		
+			return save(newAd);
+			
+		} catch (Exception ex) {
+			throw ex;
+		}
+		
+	}
+	
+    public File storeNewPhoto(MultipartFile newFile) throws Exception {
+        try {
+
+        	String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
+        	
+            if(fileName.contains("..")) {
+                throw new Exception("File name is not correct" + fileName);
+            }
+
+            File file = new File(fileName, newFile.getContentType(), newFile.getBytes());
+
+            return fileRepository.save(file);
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
 	
 	@Transactional
 	public Ad save(Ad ad) {
@@ -134,5 +177,4 @@ public class AdService {
     	}
     }
     	
-    
 }

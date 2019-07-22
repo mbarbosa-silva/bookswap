@@ -8,24 +8,27 @@ import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-@Entity(name = "file")
+@Entity
 @Table(name = "file")
 public class File {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
 	
+	@Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private String fileName;
 
     private String fileType;
 
     @Lob
     private byte[] data;
-
-    @OneToOne
+    
+    @OneToOne(mappedBy = "photo")
     private User user;
     
+    @OneToOne(mappedBy = "photo")
+    private Product product;
+
     public File() {
 
     }
@@ -75,7 +78,13 @@ public class File {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
-	
-	
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+    
 }

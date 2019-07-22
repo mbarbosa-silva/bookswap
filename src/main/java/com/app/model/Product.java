@@ -51,6 +51,9 @@ public class Product {
 	
 	@OneToMany(mappedBy="product",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
+	
+	@OneToOne
+	private File photo;
 
 	public Long getId() {
 		return id;
@@ -123,7 +126,13 @@ public class Product {
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
-	
-	
-	
+
+	public File getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(File photo) {
+		this.photo = photo;
+	}
+
 }

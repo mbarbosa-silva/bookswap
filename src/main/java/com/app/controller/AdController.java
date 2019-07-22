@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.app.controller.model.StdResponse;
 import com.app.model.Ad;
@@ -52,13 +55,11 @@ public class AdController extends Controller {
 	@PostMapping("/create/{username}")
 	@ResponseBody
 	@Transactional
-	public Ad createNewAd(@RequestBody Ad ad, @PathVariable String username, Principal principal) {
+	public Ad createNewAd(@RequestPart("ad") Ad ad,@RequestPart @Nullable MultipartFile file, @PathVariable String username, Principal principal) {
 		try {
 			checkTokenOwnership(username,principal);
 			User user = userService.findByUserName(username);			
-			ad.setUser(user);
-			user.addAd(ad);
-			return adService.save(ad);
+			return adService.createNewAd(ad, file, user);
 		} catch (Exception ex) {
 			System.out.print("\nclass: AdController | method: createNewAd \n" + ex.toString());
 			return null;

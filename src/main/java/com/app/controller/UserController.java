@@ -12,12 +12,12 @@ import com.app.service.VerificationTokenService;
 import com.google.gson.Gson;
 import java.lang.reflect.Field;
 
-import com.app.service.FileService;
 import com.app.service.SendGridMailService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.ReflectionUtils;
@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,8 +39,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.activation.FileTypeMap;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 @RestController
 @RequestMapping("/user")
 public class UserController extends Controller {
@@ -64,12 +72,13 @@ public class UserController extends Controller {
     }
     	
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestParam("file") MultipartFile file,@RequestBody User newUser) {
+    public ResponseEntity<String> signUp(@RequestPart("user") User newUser,@RequestPart @Nullable MultipartFile file) {
     	newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
     	ServletUriComponentsBuilder.fromCurrentRequest();
     	String url = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
-    	try {    	
-    		var user = userService.createNewUser(newUser);
+    	try {   
+    		
+    		var user = userService.createNewUser(newUser, file);
     		if(user == null) {
     			throw new Exception();
     		}
@@ -169,13 +178,25 @@ public class UserController extends Controller {
     }
     
     @RequestMapping(value = "/{username}", method = RequestMethod.GET)
-    public ResponseEntity<User> findByUsername(@PathVariable String username,Principal principal){
+    public ResponseEntity<HashMap<String,Object>> findByUsername(@PathVariable String username,Principal principal){
     	try {
 
     		checkTokenOwnership(username, principal);
 	    	var user = userService.findByUserName(username);
-	    	return ResponseEntity.ok().body(user);
-		
+	    	var userPhoto = user.getPhoto();
+	    	user.setPhoto(null);
+	    	
+	    	HashMap<String,Object> user_ = new HashMap<>();
+	    	user_.put("file", userPhoto.getData());
+	    	user_.put("user", user);
+	    	
+	    	//MediaType.valueOf(FileTypeMap.getDefaultFileTypeMap().getContentType(img));
+	    	
+	    	return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + userPhoto.getFileName() + "\"")
+            .header("File-type", userPhoto.getFileType())
+            .body(user_);
+	    	
     	} catch (Exception e) {
 		
     		e.printStackTrace();

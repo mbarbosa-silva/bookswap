@@ -1,16 +1,15 @@
 package com.app.service;
 
-import com.app.model.Ad;
 import com.app.model.Address;
 import com.app.model.Campus;
 import com.app.model.File;
 import com.app.model.Role;
 import com.app.model.User;
 import com.app.repository.CampusRepository;
+import com.app.repository.FileRepository;
 import com.app.repository.RoleRepository;
 import com.app.repository.UserRepository;
 
-import org.mockito.stubbing.ValidableAnswer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,8 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -32,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
+import org.springframework.util.StringUtils;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -47,6 +46,9 @@ public class UserService implements UserDetailsService {
     
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    
+    @Autowired
+    private FileRepository fileRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -65,15 +67,38 @@ public class UserService implements UserDetailsService {
                 .collect(Collectors.toList());
     }
     
-    public User createNewUser(User newUser) throws Exception {
+    public User createNewUser(User newUser, MultipartFile newUserPhoto) throws Exception {
     	try {   
     		newUser.setEnable(false);
     		newUser.setRoles(getRoles((List<Role>) newUser.getRoles()));
     		newUser.setCampus(getCampus(newUser.getCampus()));
+    		
+    		if(newUserPhoto != null) {
+    			File file = storeNewPhoto(newUserPhoto);
+    			newUser.setPhoto(file);
+    		}
+    		
     		return userRepository.save(newUser);
     	} catch(Exception ex) {
     		throw ex;
     	}
+    }
+    
+    public File storeNewPhoto(MultipartFile newFile) throws Exception {
+        try {
+
+        	String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
+        	
+            if(fileName.contains("..")) {
+                throw new Exception("File name is not correct" + fileName);
+            }
+
+            File file = new File(fileName, newFile.getContentType(), newFile.getBytes());
+
+            return fileRepository.save(file);
+        } catch (Exception ex) {
+            throw ex;
+        }
     }
     
     public User save(User user) {
@@ -176,12 +201,6 @@ public class UserService implements UserDetailsService {
 		
 		this.save(user);
     
-    }
-    
-    public void setUserPhoto(File file, String username) {
-    	User user = findByUserName(username);
-    	user.setPhoto(file);
-    	this.save(user);
     }
     
 }
