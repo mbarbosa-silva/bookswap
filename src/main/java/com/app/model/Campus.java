@@ -16,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Campus {
 	@Id
@@ -35,9 +37,11 @@ public class Campus {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
+	@JsonIgnore
 	private School school;
 	
 	@OneToMany(mappedBy = "campus")
+	@JsonIgnore
 	private List<User> user = new ArrayList<>();
 
 	public Long getId() {

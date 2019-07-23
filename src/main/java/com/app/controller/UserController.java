@@ -104,12 +104,13 @@ public class UserController extends Controller {
     }
     
     @RequestMapping(value = "/update/{username}", method = RequestMethod.PATCH)
-    public ResponseEntity<String> updateUserInfo(@PathVariable String username, @RequestBody Map<Object, Object> fields, Principal principal){
+    public ResponseEntity<String> updateUserInfo(@PathVariable String username, @RequestPart("user") Map<Object, Object> fields,@RequestPart @Nullable MultipartFile file, Principal principal){
     	try {
     		
     		checkTokenOwnership(username, principal);
     		var user = userService.findByUserName(username);
-    		userService.updateUser(user, fields);
+    		
+    		userService.updateUser(user,file, fields);
     		
     		return ResponseEntity.ok().body(gson.toJson(new StdResponse("200", "-", "User updated", "/update/{username}")));
     	

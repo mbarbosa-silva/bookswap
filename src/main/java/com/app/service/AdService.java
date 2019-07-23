@@ -18,11 +18,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.app.model.Ad;
-import com.app.model.Address;
+import com.app.model.Comment;
 import com.app.model.File;
 import com.app.model.Product;
 import com.app.model.User;
 import com.app.repository.AdRepository;
+import com.app.repository.CommentRepository;
 import com.app.repository.FileRepository;
 import com.app.repository.ProductRepository;
 import com.app.repository.UserRepository;
@@ -40,7 +41,10 @@ public class AdService {
 	private UserRepository userRepository;
 	
     @Autowired
-    private FileRepository fileRepository;
+    private FileService fileService;
+    
+    @Autowired
+    private CommentRepository commentRepository;
 		
 	public List<Ad> findAdByProductTitle(String title){		
 		return adRepostirory.findByProductTitleIgnoreCaseContaining(title);
@@ -94,7 +98,7 @@ public class AdService {
 			user.addAd(newAd);
 		
 			if(newAdPhoto != null) {
-				File file = storeNewPhoto(newAdPhoto);
+				File file = fileService.storeNewPhoto(newAdPhoto);
 				newAd.getProduct().setPhoto(file);
 			}
 		
@@ -105,23 +109,6 @@ public class AdService {
 		}
 		
 	}
-	
-    public File storeNewPhoto(MultipartFile newFile) throws Exception {
-        try {
-
-        	String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
-        	
-            if(fileName.contains("..")) {
-                throw new Exception("File name is not correct" + fileName);
-            }
-
-            File file = new File(fileName, newFile.getContentType(), newFile.getBytes());
-
-            return fileRepository.save(file);
-        } catch (Exception ex) {
-            throw ex;
-        }
-    }
 	
 	@Transactional
 	public Ad save(Ad ad) {
@@ -151,10 +138,19 @@ public class AdService {
     	return user.getAd();
     }
 	
-    public void updateAd(String id,Map<Object, Object> fields) throws Exception{
+    @SuppressWarnings("unchecked")
+	public Ad updateAd(String id,MultipartFile newAdPhoto, Map<Object, Object> fields) throws Exception{
     	try {
     		
     		var ad = findAdById(id);
+    		
+			if(newAdPhoto != null) {
+				
+				//fileService.deleteFile(Long.valueOf(id), ad.getProduct().getAd());
+				
+				File file = fileService.storeNewPhoto(newAdPhoto);
+				ad.getProduct().setPhoto(file);
+			}
     		
     		fields.forEach((k, v) -> {
     			
@@ -171,9 +167,36 @@ public class AdService {
     			}
     	    });
     	
-    		save(ad);
+    		return save(ad);
     		
     	} catch(Exception ex) {
+    		throw ex;
+    	}
+    }
+    
+    public Comment createNewComment(String id,User user, Comment newComment) throws Exception{
+    	try {
+    		var ad = findAdById(id);
+    		newComment.setUser(user);
+    		newComment.setProduct(ad.getProduct());
+    		
+    		commentRepository.save(newComment);
+  
+    		return newComment;
+    	} catch (Exception ex) {
+    		throw ex;
+    	}
+    }
+    
+    public void editComment(HashMap<String,String> IdAndNewText) {
+    	try {
+    		var comment_ = commentRepository.findById(Long.valueOf(IdAndNewText.get("id")));
+    		comment_.setText(IdAndNewText.get("text"));
+    		
+    		commentRepository.save(comment_);
+
+    	} catch (Exception ex) {
+    		throw ex;
     	}
     }
     	

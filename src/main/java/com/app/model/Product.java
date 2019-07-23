@@ -17,6 +17,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name="product")
@@ -50,9 +52,11 @@ public class Product {
 	private Ad ad;
 	
 	@OneToMany(mappedBy="product",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private List<Comment> comments = new ArrayList<>();
 	
 	@OneToOne
+	@JsonManagedReference
 	private File photo;
 
 	public Long getId() {

@@ -8,6 +8,8 @@ import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "file")
 public class File {
@@ -27,6 +29,7 @@ public class File {
     private User user;
     
     @OneToOne(mappedBy = "photo")
+    @JsonBackReference
     private Product product;
 
     public File() {

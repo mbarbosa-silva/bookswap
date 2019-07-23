@@ -48,7 +48,7 @@ public class UserService implements UserDetailsService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
     @Autowired
-    private FileRepository fileRepository;
+    private FileService fileService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -74,7 +74,7 @@ public class UserService implements UserDetailsService {
     		newUser.setCampus(getCampus(newUser.getCampus()));
     		
     		if(newUserPhoto != null) {
-    			File file = storeNewPhoto(newUserPhoto);
+    			File file = fileService.storeNewPhoto(newUserPhoto);
     			newUser.setPhoto(file);
     		}
     		
@@ -84,27 +84,11 @@ public class UserService implements UserDetailsService {
     	}
     }
     
-    public File storeNewPhoto(MultipartFile newFile) throws Exception {
-        try {
-
-        	String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
-        	
-            if(fileName.contains("..")) {
-                throw new Exception("File name is not correct" + fileName);
-            }
-
-            File file = new File(fileName, newFile.getContentType(), newFile.getBytes());
-
-            return fileRepository.save(file);
-        } catch (Exception ex) {
-            throw ex;
-        }
-    }
-    
     public User save(User user) {
     	try {   
     		return userRepository.save(user);
     	} catch(Exception ex) {
+    		ex.printStackTrace();
     		throw ex;
     	}
     }
@@ -178,8 +162,14 @@ public class UserService implements UserDetailsService {
     	return userRepository.findAll();
     }
 
-    public void updateUser(User user,Map<Object, Object> fields) throws Exception{
+    public void updateUser(User user,MultipartFile newAdPhoto, Map<Object, Object> fields) throws Exception{
 
+		if(newAdPhoto != null) {
+			
+			File file = fileService.storeNewPhoto(newAdPhoto);
+			user.setPhoto(file);
+		}
+    	
 //		fields.forEach((k,v) -> System.out.println("key: "+k+" value:"+v.getClass()));
 		fields.forEach((k, v) -> {
 			if(v.getClass() == LinkedHashMap.class && k == "address") {
