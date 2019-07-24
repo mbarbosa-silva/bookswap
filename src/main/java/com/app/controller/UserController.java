@@ -3,6 +3,7 @@ package com.app.controller;
 import com.app.controller.model.StdResponse;
 import com.app.model.Ad;
 import com.app.model.Address;
+import com.app.model.File;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -184,18 +185,21 @@ public class UserController extends Controller {
 
     		checkTokenOwnership(username, principal);
 	    	var user = userService.findByUserName(username);
-	    	var userPhoto = user.getPhoto();
-	    	user.setPhoto(null);
-	    	
+	    	File userPhoto;
 	    	HashMap<String,Object> user_ = new HashMap<>();
-	    	user_.put("file", userPhoto.getData());
-	    	user_.put("user", user);
 	    	
+	    	if(user.getPhoto()!=null) {
+	    		userPhoto = user.getPhoto();
+	    		user.setPhoto(null);
+	    		user_.put("file", userPhoto.getData());
+	    	}
+	    	
+	    	user_.put("user", user);
 	    	//MediaType.valueOf(FileTypeMap.getDefaultFileTypeMap().getContentType(img));
 	    	
 	    	return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + userPhoto.getFileName() + "\"")
-            .header("File-type", userPhoto.getFileType())
+            //.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + userPhoto.getFileName() + "\"")
+            //.header("File-type", userPhoto.getFileType())
             .body(user_);
 	    	
     	} catch (Exception e) {

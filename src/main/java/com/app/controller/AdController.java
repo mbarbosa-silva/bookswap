@@ -44,6 +44,13 @@ public class AdController extends Controller {
 	
 	private static final Gson gson = new Gson();
 	
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
 	@GetMapping("/find/Bytitle/{title}")
 	@ResponseBody
 	public List<HashMap<String, Object>> findBytitle(@PathVariable String title){
@@ -57,10 +64,13 @@ public class AdController extends Controller {
 		for(var ad : adListFromDB){
 			
 			ad_ = new HashMap<>();
-			photo = ad.getProduct().getPhoto();
-			ad.getProduct().setPhoto(null);
+			if(ad.getProduct().getPhoto()!=null) {
+				photo = ad.getProduct().getPhoto();
+				ad_.put("file",photo.getData());
+				ad.getProduct().setPhoto(null);
+			}
+			
 			ad_.put("ad", ad);
-			ad_.put("file",photo.getData());
 			
 			adList.add(ad_);
 		}
@@ -81,10 +91,13 @@ public class AdController extends Controller {
 		for(var ad_i : adListFromDB){
 			
 			ad_ = new HashMap<>();
-			photo = ad_i.getProduct().getPhoto();
-			ad_i.getProduct().setPhoto(null);
+			if(ad_i.getProduct().getPhoto()!=null) {
+				photo = ad_i.getProduct().getPhoto();
+				ad_.put("file",photo.getData());
+				ad_i.getProduct().setPhoto(null);
+			}
+			
 			ad_.put("ad", ad_i);
-			ad_.put("file",photo.getData());
 			
 			adList.add(ad_);
 		}
@@ -108,10 +121,13 @@ public class AdController extends Controller {
 			for(var ad_i : adListFromDB){
 				
 				ad_ = new HashMap<>();
-				photo = ad_i.getProduct().getPhoto();
-				ad_i.getProduct().setPhoto(null);
+				if(ad_i.getProduct().getPhoto()!=null) {
+					photo = ad_i.getProduct().getPhoto();
+					ad_.put("file",photo.getData());
+					ad_i.getProduct().setPhoto(null);
+				}
+				
 				ad_.put("ad", ad_i);
-				ad_.put("file",photo.getData());
 				
 				adList.add(ad_);
 			}
