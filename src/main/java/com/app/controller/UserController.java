@@ -1,4 +1,4 @@
-package com.app.controller;
+ package com.app.controller;
 
 import com.app.controller.model.StdResponse;
 import com.app.model.Ad;
@@ -122,15 +122,17 @@ public class UserController extends Controller {
     }
     
     @RequestMapping(value = "/update/password/{username}", method = RequestMethod.PATCH)
-    public ResponseEntity<String> updateUserPassword(@PathVariable String username, @RequestBody String newPassword, Principal principal){       	
+    public ResponseEntity<String> updateUserPassword(@PathVariable String username, @RequestBody HashMap<String, Object> password, Principal principal){       	
     	var user = userService.findByUserName(username); 
     	
     	try {
     		
     		checkTokenOwnership(username, principal);
-    		String newPasswordEncoded = bCryptPasswordEncoder.encode(newPassword);
+    		String newPasswordEncoded = bCryptPasswordEncoder.encode(password.get("newPassword").toString());
+    		String oldPasswordEncoded = bCryptPasswordEncoder.encode(password.get("oldPassword").toString());
     		
-    		if(bCryptPasswordEncoder.matches(newPassword, user.getPassword())) {
+    		if(bCryptPasswordEncoder.matches(password.get("newPassword").toString(), user.getPassword())
+    				&& !(bCryptPasswordEncoder.matches(oldPasswordEncoded, user.getPassword()))) {
     			throw new Exception("invalid password");
     		}
     		
@@ -144,10 +146,11 @@ public class UserController extends Controller {
     	}
     }
     
-    @RequestMapping(value = "/update/request/changepassword/{username}", method = RequestMethod.GET)
-    public ResponseEntity<String> requestPasswordChange(@PathVariable String username) {
+    @RequestMapping(value = "/update/request/changepassword/{email}", method = RequestMethod.GET)
+    public ResponseEntity<String> requestPasswordChange(@PathVariable String email) {
     	try { 
-    		var user = userService.findByUserName(username);
+    		//var user = userService.findByUserName(username);
+    		var user = userService.findByUserEmail(email);
     		
     		ServletUriComponentsBuilder.fromCurrentRequest();
     		String url = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
@@ -162,11 +165,12 @@ public class UserController extends Controller {
     	}
     }
     
-    @RequestMapping(value = "/update/request/changepassword/{username}/{token}", method = RequestMethod.GET)
-    public ResponseEntity<String> confirmChangePasswordMail(@PathVariable String token,@PathVariable String username) {
+    @RequestMapping(value = "/update/request/changepassword/{email}/{token}", method = RequestMethod.GET)
+    public ResponseEntity<String> confirmChangePasswordMail(@PathVariable String token,@PathVariable String email) {
     	try {
     		//checkTokenOwnership(username, principal);
-    		var user = userService.findByUserName(username);
+    		//var user = userService.findByUserName(username);
+    		var user = userService.findByUserEmail(email);
     		
     		String password = userService.resetPassword(user);	
     		

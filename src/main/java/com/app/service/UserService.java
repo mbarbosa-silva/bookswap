@@ -121,6 +121,16 @@ public class UserService implements UserDetailsService {
         return user;
     }
     
+    public User findByUserEmail(String email) throws UsernameNotFoundException{
+    	User user = userRepository.findByEmail(email);
+    	
+        if (user == null){
+            throw new UsernameNotFoundException("user not found");
+        }
+        
+        return user;
+    }
+    
     public void validateUser(User usr) {
     	try{
     		User user = userRepository.findByUsername(usr.getUsername());
@@ -192,5 +202,7 @@ public class UserService implements UserDetailsService {
 		this.save(user);
     
     }
+    
+    
     
 }
