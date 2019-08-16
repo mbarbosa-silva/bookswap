@@ -10,6 +10,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity(name="comment")
 @Table(name="comment")
 public class Comment {
@@ -18,14 +22,16 @@ public class Comment {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(name = "text", length = 700, nullable = false)
+	@Column(name = "text", length = 500, nullable = false)
 	private String text;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
+	@JsonIgnore
 	private User user;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonBackReference
 	private Product product;
 
 	public Long getId() {

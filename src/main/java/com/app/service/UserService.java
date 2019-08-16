@@ -1,11 +1,12 @@
 package com.app.service;
 
-import com.app.model.Ad;
 import com.app.model.Address;
 import com.app.model.Campus;
+import com.app.model.File;
 import com.app.model.Role;
 import com.app.model.User;
 import com.app.repository.CampusRepository;
+import com.app.repository.FileRepository;
 import com.app.repository.RoleRepository;
 import com.app.repository.UserRepository;
 
@@ -18,8 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
+import org.springframework.util.StringUtils;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -45,6 +46,9 @@ public class UserService implements UserDetailsService {
     
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    
+    @Autowired
+    private FileService fileService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -63,11 +67,17 @@ public class UserService implements UserDetailsService {
                 .collect(Collectors.toList());
     }
     
-    public User createNewUser(User newUser) throws Exception {
+    public User createNewUser(User newUser, MultipartFile newUserPhoto) throws Exception {
     	try {   
     		newUser.setEnable(false);
     		newUser.setRoles(getRoles((List<Role>) newUser.getRoles()));
     		newUser.setCampus(getCampus(newUser.getCampus()));
+    		
+    		if(newUserPhoto != null) {
+    			File file = fileService.storeNewPhoto(newUserPhoto);
+    			newUser.setPhoto(file);
+    		}
+    		
     		return userRepository.save(newUser);
     	} catch(Exception ex) {
     		throw ex;
@@ -78,6 +88,7 @@ public class UserService implements UserDetailsService {
     	try {   
     		return userRepository.save(user);
     	} catch(Exception ex) {
+    		ex.printStackTrace();
     		throw ex;
     	}
     }
@@ -102,6 +113,16 @@ public class UserService implements UserDetailsService {
     
     public User findByUserName(String username) throws UsernameNotFoundException{
     	User user = userRepository.findByUsername(username);
+    	
+        if (user == null){
+            throw new UsernameNotFoundException("user not found");
+        }
+        
+        return user;
+    }
+    
+    public User findByUserEmail(String email) throws UsernameNotFoundException{
+    	User user = userRepository.findByEmail(email);
     	
         if (user == null){
             throw new UsernameNotFoundException("user not found");
@@ -151,8 +172,14 @@ public class UserService implements UserDetailsService {
     	return userRepository.findAll();
     }
 
-    public void updateUser(User user,Map<Object, Object> fields) throws Exception{
+    public void updateUser(User user,MultipartFile newAdPhoto, Map<Object, Object> fields) throws Exception{
 
+		if(newAdPhoto != null) {
+			
+			File file = fileService.storeNewPhoto(newAdPhoto);
+			user.setPhoto(file);
+		}
+    	
 //		fields.forEach((k,v) -> System.out.println("key: "+k+" value:"+v.getClass()));
 		fields.forEach((k, v) -> {
 			if(v.getClass() == LinkedHashMap.class && k == "address") {
@@ -161,6 +188,10 @@ public class UserService implements UserDetailsService {
 					field.setAccessible(true);
 					ReflectionUtils.setField(field,user.getAddress(), y );
 				});
+				
+			} else if(v.getClass() == LinkedHashMap.class && k == "campus") {	
+				String newCampusName = (String) (((HashMap<Object, Object>) v).get("name"));
+				user.setCampus(campusRepository.findByName(newCampusName));
 			} else {
 				Field field = ReflectionUtils.findField(User.class, (String) k);
 				field.setAccessible(true);
@@ -171,5 +202,7 @@ public class UserService implements UserDetailsService {
 		this.save(user);
     
     }
+    
+    
     
 }

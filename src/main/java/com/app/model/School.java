@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 @Table
@@ -27,6 +29,7 @@ public class School {
 	private String Name;
 	
 	@OneToMany(mappedBy="school", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Campus> campus = new ArrayList<>();
 
 	public Long getId() {

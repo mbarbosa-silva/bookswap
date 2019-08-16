@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,8 +25,11 @@ public class User implements UserDetails {
     String firstName;
     private String lastName;
     
+    @Column(nullable = false, unique = true)
     private String email;
+    @Column(nullable = false, unique = true)
     private String username;
+    @Column(nullable = false, unique = true)
     private String password;
 
     private Boolean enable;
@@ -39,7 +43,7 @@ public class User implements UserDetails {
                     name = "role_id", referencedColumnName = "id"))
     private Collection<Role> roles;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn
 	private Campus campus;
 
@@ -65,6 +69,9 @@ public class User implements UserDetails {
 	@OneToMany(mappedBy="seller",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	@JsonIgnore
 	private List<Invoice> sellHistory;
+	
+	@OneToOne
+	private File photo;
 	
     public User() {
     }
@@ -131,21 +138,7 @@ public class User implements UserDetails {
 
     public void setRoles(Collection<Role> roles) {
         this.roles = roles;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + "*********" + '\'' +
-                ", roles=" + roles +
-                '}';
-    }
-    
-    
+    }    
 
 	public Campus getCampus() {
 		return campus;
@@ -198,6 +191,14 @@ public class User implements UserDetails {
 	public void setSellHistory(List<Invoice> sellHistory) {
 		this.sellHistory = sellHistory;
 	}
+	
+	public File getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(File photo) {
+		this.photo = photo;
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -232,4 +233,13 @@ public class User implements UserDetails {
 	public void setEnable(Boolean enable) {
 		this.enable = enable;
 	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
+				+ ", username=" + username + ", password=" + password + ", enable=" + enable + ", roles=" + roles
+				+ ", campus=" + campus + ", comments=" + comments + ", address=" + address + ", ad=" + ad
+				+ ", buyHistory=" + buyHistory + ", sellHistory=" + sellHistory + ", photo=" + photo + "]";
+	}
+
 }

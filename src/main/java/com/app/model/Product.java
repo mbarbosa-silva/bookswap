@@ -17,6 +17,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name="product")
@@ -41,8 +43,11 @@ public class Product {
 	@Column(name = "publisher", length = 128, nullable = false)
 	private String publisher;
 	
-	@Column(name = "description", length = 255, nullable = false)
-	private String description;
+	@Column(name = "subject", length = 255, nullable = false)
+	private String subject;
+	
+	@Column(name = "year", length = 4, nullable = true)
+	private String year;
 	
 	@OneToOne(mappedBy="product",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(nullable = false)
@@ -50,7 +55,12 @@ public class Product {
 	private Ad ad;
 	
 	@OneToMany(mappedBy="product",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private List<Comment> comments = new ArrayList<>();
+	
+	@OneToOne
+	@JsonManagedReference
+	private File photo;
 
 	public Long getId() {
 		return id;
@@ -100,12 +110,12 @@ public class Product {
 		this.publisher = publisher;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getSubject() {
+		return subject;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setSubject(String description) {
+		this.subject = description;
 	}
 
 	public Ad getAd() {
@@ -123,7 +133,23 @@ public class Product {
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
+
+	public File getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(File photo) {
+		this.photo = photo;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
 	
 	
-	
+
 }
