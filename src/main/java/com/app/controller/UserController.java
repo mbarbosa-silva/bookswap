@@ -214,5 +214,38 @@ public class UserController extends Controller {
     	}
 
     }
+    
+    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
+    public ResponseEntity<HashMap<String,Object>> findByUsernameById(@PathVariable String id,Principal principal){
+    	try {
+    		
+    		var user = (userService.findById(id));
+    		checkTokenOwnership(user.getUsername(), principal);
+	    	
+	    	File userPhoto;
+	    	HashMap<String,Object> user_ = new HashMap<>();
+	    	
+	    	if(user.getPhoto()!=null) {
+	    		userPhoto = user.getPhoto();
+	    		user.setPhoto(null);
+	    		user_.put("file", userPhoto.getData());
+	    	}
+	    	
+	    	user_.put("user", user);
+	    	//MediaType.valueOf(FileTypeMap.getDefaultFileTypeMap().getContentType(img));
+	    	
+	    	return ResponseEntity.ok()
+            //.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + userPhoto.getFileName() + "\"")
+            //.header("File-type", userPhoto.getFileType())
+            .body(user_);
+	    	
+    	} catch (Exception e) {
+		
+    		e.printStackTrace();
+			return null;
+		
+    	}
+
+    }
    
 }

@@ -36,7 +36,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 					"/user/signup/**",
 					"/user/update/request/changepassword/**",
 					"/ad/find/**",
-					"/school/**").permitAll()
+					"/school/**",
+					"/id/{id}").permitAll()
 		.antMatchers(HttpMethod.POST, "/user/login").permitAll()
 		.anyRequest().authenticated()
 		.and()
