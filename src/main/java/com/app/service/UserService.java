@@ -6,7 +6,6 @@ import com.app.model.File;
 import com.app.model.Role;
 import com.app.model.User;
 import com.app.repository.CampusRepository;
-import com.app.repository.FileRepository;
 import com.app.repository.RoleRepository;
 import com.app.repository.UserRepository;
 
@@ -28,10 +27,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
-import org.springframework.util.StringUtils;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -173,7 +170,8 @@ public class UserService implements UserDetailsService {
     	return userRepository.findAll();
     }
 
-    public void updateUser(User user,MultipartFile newAdPhoto, Map<Object, Object> fields) throws Exception{
+    @SuppressWarnings("unchecked")
+	public void updateUser(User user,MultipartFile newAdPhoto, Map<Object, Object> fields) throws Exception{
 
 		if(newAdPhoto != null) {
 			

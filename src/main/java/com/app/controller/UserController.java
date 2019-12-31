@@ -1,36 +1,27 @@
  package com.app.controller;
 
 import com.app.controller.model.StdResponse;
-import com.app.model.Ad;
-import com.app.model.Address;
 import com.app.model.File;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import com.app.model.User;
 import com.app.service.UserService;
 import com.app.service.VerificationTokenService;
 import com.google.gson.Gson;
-import java.lang.reflect.Field;
 
 import com.app.service.SendGridMailService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -38,17 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.activation.FileTypeMap;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 @RestController
 @RequestMapping("/user")
 public class UserController extends Controller {
